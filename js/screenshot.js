@@ -2,10 +2,21 @@
  * Created by olexandr on 19.02.2016.
  */
 
-function convertCanvasToImage(canvas) {
+function convertCanvasToImage(canvas, isWebGL) {
+
     var image = document.getElementById('screenShot');
-    image.src = canvas.toDataURL("image/png");
-    return image;
+    //if (isWebGL)
+    //    canvasData = canvas.toDataURL();
+    //else
+        canvasData = canvas.toDataURL("image/png");
+
+    image.src = canvasData;
+
+    //sent to server
+    var ajax = new XMLHttpRequest();
+    ajax.open("POST",'/imgsave.php',true);
+    ajax.setRequestHeader('Content-Type', 'canvas/upload');
+    ajax.send("canvasData"+canvasData );
 }
 
 
