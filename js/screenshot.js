@@ -10,12 +10,21 @@ function convertCanvasToImage(canvas, isWebGL) {
     //else
         canvasData = canvas.toDataURL("image/png");
 
-    image.src = canvasData;
+    //image.src = canvasData;
+
 
     //sent to server
     var ajax = new XMLHttpRequest();
-    ajax.open("POST",'/imgsave.php',true);
+    ajax.open("POST",'imgsave.php',true);
     ajax.setRequestHeader('Content-Type', 'canvas/upload');
+    ajax.onreadystatechange = function() {
+        if (ajax.readyState == 4) {
+            if(ajax.status == 200) {
+                //alert('done!');
+                loadLastScreenShots();
+            }
+        }
+    };
     ajax.send("canvasData"+canvasData );
 }
 
@@ -36,3 +45,16 @@ function convertSVGToImage() {
         // Now is done
         console.log( canvas.toDataURL( "image/png" ) );
     };}
+
+
+function loadLastScreenShots(){
+    $.ajax({
+        url: 'screenshot_list.php',
+        before:function (data) {
+            $('#lastScreenshots').html( 'loading' );
+        },
+        success: function (data) {
+            $('#lastScreenshots').html( data );
+        }
+    });
+}

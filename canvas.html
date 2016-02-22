@@ -25,6 +25,8 @@
     <script src="js/RequestAnimationFrame.js"></script>
     <script src="js/screenshot.js"></script>
 
+    <script src="https://code.jquery.com/jquery-1.9.0.min.js"></script>
+
 </head>
 <body>
 
@@ -84,7 +86,7 @@
 //        texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(1, 1);
         //var moduleMaterial = new THREE.MeshLambertMaterial({map: texture});
-        var moduleMaterial = new THREE.MeshBasicMaterial({map: texture});
+        var moduleMaterial = new THREE.MeshBasicMaterial({map: texture, overdraw: true});
 
 
         solPanelParams.height = rows * ( moduleSize.height + spaceBetweenModules );
@@ -115,19 +117,19 @@
 
 
         //solPanelSupports
-        supportBarMaterial = new THREE.MeshBasicMaterial({color: 0xE0});
+        supportBarMaterial = new THREE.MeshBasicMaterial({color: 0xE0, overdraw: true});
 
         var supportBarRows = 2;
-        var supportBarPerRow = 3;
+        var supportBarPerRow = 4;
         var suppBarWidth = 10;
         spaceBetweenSupportsX = solPanelParams.width / ( supportBarPerRow - 1 ) - suppBarWidth;
         spaceBetweenSupportsZ = solPanelParams.height - suppBarWidth  - 20;
 
         var suppBarHeight ;
-        for (r=0; r < 2; r++) {
+        for (r=0; r < supportBarRows; r++) {
             for (c = 0; c < supportBarPerRow; c++) {
                 suppBarHeight = ( r < 1 ) ? 170 : 70;
-                var supportBar = new THREE.Mesh(new THREE.CubeGeometry(suppBarWidth, suppBarHeight, suppBarWidth, 1, 1, 1), supportBarMaterial);
+                var supportBar = new THREE.Mesh(new THREE.CubeGeometry(suppBarWidth, suppBarHeight, suppBarWidth, 4, 4, 4), supportBarMaterial);
 
                 supportBar.position.x = (c * spaceBetweenSupportsX) - solPanelParams.halfWidth;
                 //shiftFirst for correct position
@@ -142,13 +144,13 @@
         }
 
         // Plane
-        planeMaterial = new THREE.MeshBasicMaterial({color: 0x00, overdraw: false});
+        planeMaterial = new THREE.MeshBasicMaterial({color: 0x7a7a7a, overdraw: true});
 //        planeMaterial.polygonOffset = true;
 //        planeMaterial.polygonOffsetFactor = -0.1;
-        planeMaterial.opacity = 0.5;
-        planeMaterial.overdraw = false;
+        //planeMaterial.opacity = 0.5;
+        //planeMaterial.overdraw = false;
 
-        plane = new THREE.Mesh(new THREE.PlaneGeometry(solPanelParams.width, solPanelParams.height, 2, 2), planeMaterial);
+        plane = new THREE.Mesh(new THREE.PlaneGeometry(solPanelParams.width, solPanelParams.height, 10, 10), planeMaterial);
         plane.rotation.x = -90 * ( Math.PI / 180 );
         //plane.overdraw = true;
         solarPanel.add(plane);
@@ -224,9 +226,10 @@
     }
 </script>
 <hr>
-X<input type="text" name="angleX" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)">deg
-Y<input type="text" name="angleY" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)">deg
-Z<input type="text" name="angleZ" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)">deg
+angle: <input type="text" name="angleX" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)"> deg
+<!--Y<input type="text" name="angleY" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)">deg-->
+<!--Z<input type="text" name="angleZ" value="30" size="3" maxlength="3" onkeyup="changePanelAngle(this)">deg-->
+
 <script>
     function changePanelAngle( obj ){
 //        var angleValue = document.getElementById('angle').value;
@@ -263,8 +266,14 @@ Z<input type="text" name="angleZ" value="30" size="3" maxlength="3" onkeyup="cha
         rotateAroundWorldAxis(solarModulesContainer, threeVector, angleValue * Math.PI / 180);
     }
 </script>
-<button onclick="convertCanvasToImage(document.getElementsByTagName('canvas')[0])">Make screenshot</button>
-<img id="screenShot" src="" alt="screenshot">
 
+<button onclick="convertCanvasToImage(document.getElementsByTagName('canvas')[0])">Make screenshot</button>
+<!--<img id="screenShot" src="" alt="screenshot">-->
+<div id="lastScreenshots">
+    loading...
+</div>
+<script>
+    loadLastScreenShots();
+</script>
 </body>
 </html>
